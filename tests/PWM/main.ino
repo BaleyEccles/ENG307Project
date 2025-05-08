@@ -1,5 +1,5 @@
 
-#define PWMPin 5;
+const int PWMPin = 5;
 
 void setup() {
   pinMode(PWMPin, OUTPUT);

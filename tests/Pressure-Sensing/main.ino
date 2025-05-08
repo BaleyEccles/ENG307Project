@@ -1,6 +1,5 @@
-
-#define pressurePin1 = A1;
-#define pressurePin2 = A2;
+const int pressurePin1 = A1;
+const int pressurePin2 = A2;
 
 void setup() {
   Serial.begin(9600); // 9600 baud, for serial comms

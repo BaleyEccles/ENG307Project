@@ -1,5 +1,4 @@
-
-#define temperaturePin = A3;
+const int  temperaturePin = A3;
 
 void setup() {
   Serial.begin(9600); // 9600 baud, for serial comms

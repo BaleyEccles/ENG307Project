@@ -1,6 +1,5 @@
-
-#define buttonPin1 = 2;
-#define buttonPin2 = 3;
+const int buttonPin1 = 2;
+const int buttonPin2 = 3;
 
 void setup() {
   Serial.begin(9600); // 9600 baud, for serial comms
