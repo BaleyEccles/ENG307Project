@@ -1,0 +1,4 @@
+* Temperature Sensing
+This test will read in a value from the analogue read pin A3 and display it on the serial monitor.
+
+This will allow us to calibrate the temperature sensor. The output value will not be in Celsius and will need to be linearly scaled by some constant, which can be found using an external temperature sensor.

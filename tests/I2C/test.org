@@ -1,0 +1,5 @@
+* I2C
+This test will display the message "Test Message" on the LCD via I2C. The I2C operates on pins SDA/A4 and SCL/A5.
+
+This will allow us to find the necessary values for setting up the I2C interface, the default values may not work and might need to be changed.
+

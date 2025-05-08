@@ -1,0 +1,4 @@
+
+* PWM
+The intention of this test is to output a PWM signal on pin 5. It starts at the lowest value (0), then increases to the highest value (255) and then goes back down, repeating until reset.
+This will allow us to determent if the motor is correctly setup.
