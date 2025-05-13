@@ -1,1 +1,6 @@
 *.*~
+*.eep
+*.yaml
+/build/
+
+*.bin
