@@ -1,18 +1,32 @@
-#include <Arduino.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
-unsigned char i = 0;
+
+const int pressurePin1 = A1;
+const int pressurePin2 = A2;
+const int PWMPin = 5;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
 
 void setup()
 {
-  pinMode(3,OUTPUT);
-  Serial.begin(9600);
+  lcd.init(); // initialize the lcd
+  lcd.backlight();
+  pinMode(PWMPin, OUTPUT);
 }
 
 void loop()
 {
-  digitalWrite(3,HIGH);
-  delay(500);
-  digitalWrite(3,LOW);
-  delay(500);
-  Serial.println(i++);
+  int pressureValue1 = analogRead(pressurePin1);
+  int pressureValue2 = analogRead(pressurePin2);
+  String p1 = String(pressureValue1);
+  String p2 = String(pressureValue2);
+  lcd.clear();                 // clear display
+  lcd.setCursor(0, 0);         // move cursor to   (0, 0)
+  lcd.print("p1 " + p1);        // print message at (0, 0)
+  lcd.setCursor(0, 1);         // move cursor to   (0, 1)
+  lcd.print("p2 " + p2);
+  delay(250);                 // display the above for two seconds
+  Serial.print("RUNNING :P ");
+  analogWrite(PWMPin, 255);
 }
