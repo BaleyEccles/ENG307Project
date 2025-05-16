@@ -2,3 +2,6 @@
 This test will read in values from the analogue read pin A1 and A2, and display them on the serial monitor.
 
 This will allow us to calibrate the pressure sensors.
+
+
+Max is about 50 in the code

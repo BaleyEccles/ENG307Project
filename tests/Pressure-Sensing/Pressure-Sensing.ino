@@ -9,7 +9,6 @@ void loop() {
   int pressureValue1 = analogRead(pressurePin1);
   int pressureValue2 = analogRead(pressurePin2);
   
-  
   Serial.print("Pressure 1: ");
   Serial.println(pressureValue1);
   Serial.print("Pressure 2: ");
