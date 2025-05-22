@@ -12,13 +12,14 @@ const int temperaturePin = A3;
 const int buttonPin1 = 2;
 const int buttonPin2 = 3;
 const int PWMPin = 5;
+const int servoPin = 6;
 
 /*
 // THINGS
 */
 
-Servo myServo;
-LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
+Servo servo;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 /*
 // ABSTRACTIONS
@@ -32,10 +33,10 @@ void PWM(int value)
 
 void displayMessage(String line1, String line2)
 {
-  lcd.clear();                 // clear display
-  lcd.setCursor(0, 0);         // move cursor to   (0, 0)
-  lcd.print(line1);        // print message at (0, 0)
-  lcd.setCursor(0, 1);         // move cursor to   (0, 1)
+  lcd.clear();         // clear display
+  lcd.setCursor(0, 0); // move cursor to   (0, 0)
+  lcd.print(line1);    // print message at (0, 0)
+  lcd.setCursor(0, 1); // move cursor to   (0, 1)
   lcd.print(line2);
 }
 
@@ -66,10 +67,12 @@ int readButton2()
   return digitalRead(buttonPin2);
 }
 
-// angle is in ragne 0-360
+// angle is in ragne 0-90
+// 0    0% pinched
+// 90 100% pinched
 void setServoAngle(int angle)
 {
-  myServo.write(angle);
+  servo.write(angle);
 }
 
 /*
@@ -93,7 +96,9 @@ void setup()
   pinMode(buttonPin2, INPUT);
 
   // Servo
-  myServo.attach(6);
+  servo.attach(servoPin);
+
+  setServoAngle(90);
 }
 
 /*
@@ -102,14 +107,25 @@ void setup()
 
 void loop()
 {
-
   String p1 = String(readPressure1());
   String p2 = String(readPressure2());
+  
+  int p1int = readPressure1();
+  int p2int = readPressure2();
 
   displayMessage("p1 " + p1, "p2 " + p2);
   
   delay(250);
-  Serial.print("RUNNING");
+  Serial.print("RUNNING\n");
+  Serial.print("p1 " + p1 + "\n"); // Top Tank: 0-20
+  Serial.print("p2 " + p2 + "\n"); // Bottom Tank: 0->50
+
+  if (p2int > 20 || p1int > 20) {
+    setServoAngle(0);
+  } else {
+    setServoAngle(90);
+  }
+  
 
   // PWM
   PWM(255);
