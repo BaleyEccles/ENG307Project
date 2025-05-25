@@ -2,6 +2,16 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+#define DEBUG_ENABLE
+
+#ifdef DEBUG_ENABLE
+void DEBUG_MESSAGE(String msg) {
+  Serial.print(msg);  
+}
+#else
+void DEBUG_MESSAGE(String msg) {}
+#endif
+
 /*
 // PIN DEFINITIONS
 */
@@ -93,21 +103,26 @@ void setServoAngle(int angle)
 
 void buttonPressed1()
 {
+  DEBUG_MESSAGE("BUTTON 1 PRESSED\n");
   switch(displayState)
     {
     case DISPLAY_1: {
       displayState = DISPLAY_2;
+      DEBUG_MESSAGE("CHANGED TO DISPLAY STATE 2\n");
       break;
     }
     case DISPLAY_2: {
+      DEBUG_MESSAGE("CHANGED TO DISPLAY STATE 3\n");
       displayState = DISPLAY_3;
       break;
     }
     case DISPLAY_3: {
+      DEBUG_MESSAGE("CHANGED TO DISPLAY STATE 1\n");
       displayState = DISPLAY_1;
       break;
     }
     default: {
+      DEBUG_MESSAGE("CHANGED TO DISPLAY STATE 1 + ERROR\n");
       displayState = DISPLAY_1;
       break;
     }
@@ -120,13 +135,16 @@ void buttonPressed2()
     {
     case 255: {
       PWMSpeed = 0;
+      DEBUG_MESSAGE("PWM = 0\n");
       break;
     }
     case 0: {
       PWMSpeed = 255;
+      DEBUG_MESSAGE("PWM = 255\n");
       break;
     }
     default: {
+      DEBUG_MESSAGE("PWM = 255 + ERROR\n");
       PWMSpeed = 255;
       break;
     }
@@ -142,18 +160,22 @@ void manageDisplay() {
     {
     case DISPLAY_1: {
       displayMessage("Pressure top " + pressureTop, "Pressure bottom " + pressureBottom);
+      DEBUG_MESSAGE("MESSAGE DISPLAYED 1\n");
       break;
     }
     case DISPLAY_2: {
       displayMessage("Servo angle " + servoAngle, "Duty cycle " + String(100.0f*(float)PWMSpeed/255.0f));
+      DEBUG_MESSAGE("MESSAGE DISPLAYED 2\n");
       break;
     }
     case DISPLAY_3: {
       displayMessage("Temperature " + String(temperature), ":)");
+      DEBUG_MESSAGE("MESSAGE DISPLAYED 3\n");
       break;
     }
     default: {
       displayMessage("ERROR:", "THIS CODE SHOULD BE UNREACHABLE");
+      DEBUG_MESSAGE("MESSAGE DISPLAYED ERROR\n");
       break;
     }
     }
@@ -208,12 +230,14 @@ void loop()
   
   if (pressureBottom > 20 || pressureTop > 20) {
     servoAngle = 0;
-   } else {
+  DEBUG_MESSAGE("SERVO CHANGED TO 0\n");
+  } else {
     servoAngle = 90;
-   }
-  delay(250);   
+  DEBUG_MESSAGE("SERVO CHANGED TO 90\n");
+  }
+  delay(250);
 
   // Debug stuff
-  Serial.print("RUNNING\n");
+  DEBUG_MESSAGE("RUNNING\n");
 
 }
