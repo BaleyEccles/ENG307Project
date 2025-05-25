@@ -21,6 +21,18 @@ const int servoPin = 6;
 Servo servo;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+int PWMSpeed = 255;
+int servoAngle = 0;
+float temperature = 0;
+int pressureTop = 0;
+int pressureBottom = 0;
+
+enum displayState1 {
+  DISPLAY_1, DISPLAY_2, DISPLAY_3
+};
+
+displayState1 displayState = DISPLAY_1;
+
 /*
 // ABSTRACTIONS
 */
@@ -56,7 +68,7 @@ int getTemperature()
   return analogRead(temperaturePin);
 }
 
-// returns 0 when pressed, 1 when not pressed
+// returns 0 when pressed case 1 w:hen not pressed
 int readButton1()
 {
   return digitalRead(buttonPin1);
@@ -73,6 +85,79 @@ int readButton2()
 void setServoAngle(int angle)
 {
   servo.write(angle);
+}
+
+/*
+// Button Interrupts
+*/
+
+void buttonPressed1()
+{
+  switch(displayState)
+    {
+    case DISPLAY_1: {
+      displayState = DISPLAY_2;
+      break;
+    }
+    case DISPLAY_2: {
+      displayState = DISPLAY_3;
+      break;
+    }
+    case DISPLAY_3: {
+      displayState = DISPLAY_1;
+      break;
+    }
+    default: {
+      displayState = DISPLAY_1;
+      break;
+    }
+    }
+}
+
+void buttonPressed2()
+{
+  switch(PWMSpeed)
+    {
+    case 255: {
+      PWMSpeed = 0;
+      break;
+    }
+    case 0: {
+      PWMSpeed = 255;
+      break;
+    }
+    default: {
+      PWMSpeed = 255;
+      break;
+    }
+    }
+}
+
+/*
+// MAIN FUNCTIONS
+*/
+
+void manageDisplay() {
+  switch(displayState)
+    {
+    case DISPLAY_1: {
+      displayMessage("Pressure top " + pressureTop, "Pressure bottom " + pressureBottom);
+      break;
+    }
+    case DISPLAY_2: {
+      displayMessage("Servo angle " + servoAngle, "Duty cycle " + String(100.0f*(float)PWMSpeed/255.0f));
+      break;
+    }
+    case DISPLAY_3: {
+      displayMessage("Temperature " + String(temperature), ":)");
+      break;
+    }
+    default: {
+      displayMessage("ERROR:", "THIS CODE SHOULD BE UNREACHABLE");
+      break;
+    }
+    }
+ 
 }
 
 /*
@@ -97,36 +182,38 @@ void setup()
 
   // Servo
   servo.attach(servoPin);
-
   setServoAngle(90);
+
+  // Interrupt on buttons
+  attachInterrupt(digitalPinToInterrupt(buttonPin1), buttonPressed1, FALLING);
+  attachInterrupt(digitalPinToInterrupt(buttonPin2), buttonPressed2, FALLING);
 }
+
 
 /*
 // MAIN LOOP
 */
 
+
 void loop()
 {
-  String p1 = String(readPressure1());
-  String p2 = String(readPressure2());
   
-  int p1int = readPressure1();
-  int p2int = readPressure2();
+  pressureTop = readPressure1();
+  pressureBottom = readPressure2();
+  temperature = getTemperature();
+  manageDisplay();
+  PWM(PWMSpeed);
+  setServoAngle(servoAngle);  
 
-  displayMessage("p1 " + p1, "p2 " + p2);
   
-  delay(250);
+  if (pressureBottom > 20 || pressureTop > 20) {
+    servoAngle = 0;
+   } else {
+    servoAngle = 90;
+   }
+  delay(250);   
+
+  // Debug stuff
   Serial.print("RUNNING\n");
-  Serial.print("p1 " + p1 + "\n"); // Top Tank: 0-20
-  Serial.print("p2 " + p2 + "\n"); // Bottom Tank: 0->50
 
-  if (p2int > 20 || p1int > 20) {
-    setServoAngle(0);
-  } else {
-    setServoAngle(90);
-  }
-  
-
-  // PWM
-  PWM(255);
 }
