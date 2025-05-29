@@ -2,6 +2,11 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
+
+/*
+// DEBUG MESSAGE DEFINITIONS
+// Print to the serial if DEBUG_ENABLE is defined
+*/
 #define DEBUG_ENABLE
 
 #ifdef DEBUG_ENABLE
@@ -14,10 +19,11 @@ void DEBUG_MESSAGE(String msg) {}
 
 /*
 // PIN DEFINITIONS
+// A mapping from pin name to easy to understand names
 */
 
-const int pressurePin1 = A1;
-const int pressurePin2 = A2;
+const int pressurePinTop = A1;
+const int pressurePinBottom = A2;
 const int temperaturePin = A3;
 const int buttonPin1 = 2;
 const int buttonPin2 = 3;
@@ -25,18 +31,25 @@ const int PWMPin = 5;
 const int servoPin = 6;
 
 /*
-// THINGS
+// EXTERNAL DEFINITIONS
+// Classes/Structs for the used libraries
 */
 
-Servo servo;
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+Servo servo; // From Servo.h
+LiquidCrystal_I2C lcd(0x27, 16, 2); // From LiquidCrystal_I2C.h
+
+/*
+// INTERNAL DEFINITIONS
+// Global varibles that can be used as state for our system
+*/
 
 int PWMSpeed = 255;
 int servoAngle = 0;
-float temperature = 0;
 int pressureTop = 0;
 int pressureBottom = 0;
+float temperature = 0;
 
+// Enum for our display
 enum displayState1 {
   DISPLAY_1, DISPLAY_2, DISPLAY_3
 };
@@ -45,6 +58,7 @@ displayState1 displayState = DISPLAY_1;
 
 /*
 // ABSTRACTIONS
+// Functions that will make it easier to implement a more complicated system
 */
 
 // Value between 0-255
@@ -67,16 +81,16 @@ void displayMessage(String line1, String line2)
 
 int readPressureTop()
 {
-  int pressure1 = analogRead(pressurePin1);
-  DEBUG_MESSAGE("READ PRESSURE TOP: " + (String)pressure1 + "\n");
-  return pressure1;
+  int pressureTop = analogRead(pressurePinTop);
+  DEBUG_MESSAGE("READ PRESSURE TOP: " + (String)pressureTop + "\n");
+  return pressureTop;
 }
 
 int readPressureBottom()
 {
-  int pressure2 = analogRead(pressurePin2);
-  DEBUG_MESSAGE("READ PRESSURE BOTTOM: " + (String)pressure2 + "\n");
-  return pressure2;
+  int pressureBottom = analogRead(pressurePinBottom);
+  DEBUG_MESSAGE("READ PRESSURE BOTTOM: " + (String)pressureBottom + "\n");
+  return pressureBottom;
 }
 
 int getTemperature()
@@ -97,7 +111,7 @@ int getTemperature()
   return temperature;
 }
 
-// returns 0 when pressed case 1 w:hen not pressed
+// returns 0 when pressed and 1 when not pressed
 int readButton1()
 {
   int button1 = digitalRead(buttonPin1);
@@ -122,10 +136,11 @@ void setServoAngle(int angle)
 }
 
 /*
-// Button Interrupts
+// BUTTON INTERRUPTS
+// Functions that are called when each of the buttons are pressed
 */
 
-void buttonPressed1()
+Void buttonPressed1()
 {
   DEBUG_MESSAGE("BUTTON 1 PRESSED\n");
   switch(displayState)
@@ -177,6 +192,7 @@ void buttonPressed2()
 
 /*
 // MAIN FUNCTIONS
+// Functions that deal with the main logic of the system
 */
 
 void manageDisplay() {
@@ -208,6 +224,8 @@ void manageDisplay() {
 
 /*
 // SETUP
+// Function that is called Arduino is first turned on
+// Used to setup things
 */
 
 void setup()
@@ -238,18 +256,22 @@ void setup()
 
 /*
 // MAIN LOOP
+// Function that continuously loops when arduino is on
+// Calls the other functions to update the state
 */
 
 
 void loop()
 {
-  
+
+  // Update state
   pressureTop = readPressureTop();
   pressureBottom = readPressureBottom();
   temperature = getTemperature();
-  manageDisplay();
   PWM(PWMSpeed);
-  setServoAngle(servoAngle);  
+  setServoAngle(servoAngle);
+
+  manageDisplay();
 
   
   if (pressureBottom > 20 || pressureTop > 20) {
