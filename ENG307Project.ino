@@ -50,7 +50,7 @@ displayState1 displayState = DISPLAY_1;
 // Value between 0-255
 void PWM(int value)
 {
-  DEBUG_MESSAGE("SET PWM TO " + value + "\n");
+  DEBUG_MESSAGE("SET PWM TO " + (String)value + "\n");
   analogWrite(PWMPin, value);
 }
 
@@ -68,14 +68,14 @@ void displayMessage(String line1, String line2)
 int readPressureTop()
 {
   int pressure1 = analogRead(pressurePin1);
-  DEBUG_MESSAGE("READ PRESSURE TOP: " + pressure1 + "\n");
+  DEBUG_MESSAGE("READ PRESSURE TOP: " + (String)pressure1 + "\n");
   return pressure1;
 }
 
 int readPressureBottom()
 {
   int pressure2 = analogRead(pressurePin2);
-  DEBUG_MESSAGE("READ PRESSURE BOTTOM: " + pressure2 + "\n");
+  DEBUG_MESSAGE("READ PRESSURE BOTTOM: " + (String)pressure2 + "\n");
   return pressure2;
 }
 
@@ -93,7 +93,7 @@ int getTemperature()
   float R2 = R1 * (Vmax / pinVoltage - 1);
   float temperature = 30.0 - (30.0 - 5.0) * (R2 - R2min) / (R2max - R2min);
 
-  DEBUG_MESSAGE("READ TEMPERATURE: " + temperature + "\n");
+  DEBUG_MESSAGE("READ TEMPERATURE: " + (String)temperature + "\n");
   return temperature;
 }
 
@@ -101,14 +101,14 @@ int getTemperature()
 int readButton1()
 {
   int button1 = digitalRead(buttonPin1);
-  DEBUG_MESSAGE("READ BUTTON 1: " + button1 + "\n");
+  DEBUG_MESSAGE("READ BUTTON 1: " + (String)button1 + "\n");
   return button1;
 }
 
 int readButton2()
 {
   int button2 = digitalRead(buttonPin2);
-  DEBUG_MESSAGE("READ BUTTON 2: " + button2 + "\n");
+  DEBUG_MESSAGE("READ BUTTON 2: " + (String)button2 + "\n");
   return button2;
 }
 
@@ -117,7 +117,7 @@ int readButton2()
 // 90 100% pinched
 void setServoAngle(int angle)
 {
-  DEBUG_MESSAGE("SET SERVO ANGLE TO: " + angle + "\n");
+  DEBUG_MESSAGE("SET SERVO ANGLE TO: " + (String)angle + "\n");
   servo.write(angle);
 }
 
