@@ -74,8 +74,17 @@ int readPressure2()
 
 int getTemperature()
 {
-  // TODO: Need to convert to actual temperature, instead of voltage
-  return analogRead(temperaturePin);
+  const float Vmax = 5.0f;
+  const float R1 = 68e3;
+
+  const float R2min = 30e3;
+  const float R2max = 150e3;
+  
+  int pinValue = analogRead(temperaturePin);
+  float pinVoltage = ((float)pinValue/1023.0f)*Vmax;
+  float R2 = R1 * (Vmax / pinVoltage - 1);
+  float temperature = 30.0 - (30.0 - 5.0) * (R2 - R2min) / (R2max - R2min);
+  return temperature;
 }
 
 // returns 0 when pressed case 1 w:hen not pressed
