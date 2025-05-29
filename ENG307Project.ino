@@ -140,7 +140,7 @@ void setServoAngle(int angle)
 // Functions that are called when each of the buttons are pressed
 */
 
-Void buttonPressed1()
+void buttonPressed1()
 {
   DEBUG_MESSAGE("BUTTON 1 PRESSED\n");
   switch(displayState)
