@@ -50,11 +50,14 @@ displayState1 displayState = DISPLAY_1;
 // Value between 0-255
 void PWM(int value)
 {
+  DEBUG_MESSAGE("SET PWM TO " + value + "\n");
   analogWrite(PWMPin, value);
 }
 
 void displayMessage(String line1, String line2)
 {
+  DEBUG_MESSAGE("DISPLAY MESSAGE \"" + line1 + "\" ON LINE 1\n");
+  DEBUG_MESSAGE("DISPLAY MESSAGE \"" + line2 + "\" ON LINE 2\n");
   lcd.clear();         // clear display
   lcd.setCursor(0, 0); // move cursor to   (0, 0)
   lcd.print(line1);    // print message at (0, 0)
@@ -62,18 +65,23 @@ void displayMessage(String line1, String line2)
   lcd.print(line2);
 }
 
-int readPressure1()
+int readPressureTop()
 {
-  return analogRead(pressurePin1);
+  int pressure1 = analogRead(pressurePin1);
+  DEBUG_MESSAGE("READ PRESSURE TOP: " + pressure1 + "\n");
+  return pressure1;
 }
 
-int readPressure2()
+int readPressureBottom()
 {
-  return analogRead(pressurePin2);
+  int pressure2 = analogRead(pressurePin2);
+  DEBUG_MESSAGE("READ PRESSURE BOTTOM: " + pressure2 + "\n");
+  return pressure2;
 }
 
 int getTemperature()
 {
+  
   const float Vmax = 5.0f;
   const float R1 = 68e3;
 
@@ -84,18 +92,24 @@ int getTemperature()
   float pinVoltage = ((float)pinValue/1023.0f)*Vmax;
   float R2 = R1 * (Vmax / pinVoltage - 1);
   float temperature = 30.0 - (30.0 - 5.0) * (R2 - R2min) / (R2max - R2min);
+
+  DEBUG_MESSAGE("READ TEMPERATURE: " + temperature + "\n");
   return temperature;
 }
 
 // returns 0 when pressed case 1 w:hen not pressed
 int readButton1()
 {
-  return digitalRead(buttonPin1);
+  int button1 = digitalRead(buttonPin1);
+  DEBUG_MESSAGE("READ BUTTON 1: " + button1 + "\n");
+  return button1;
 }
 
 int readButton2()
 {
-  return digitalRead(buttonPin2);
+  int button2 = digitalRead(buttonPin2);
+  DEBUG_MESSAGE("READ BUTTON 2: " + button2 + "\n");
+  return button2;
 }
 
 // angle is in ragne 0-90
@@ -103,6 +117,7 @@ int readButton2()
 // 90 100% pinched
 void setServoAngle(int angle)
 {
+  DEBUG_MESSAGE("SET SERVO ANGLE TO: " + angle + "\n");
   servo.write(angle);
 }
 
@@ -229,8 +244,8 @@ void setup()
 void loop()
 {
   
-  pressureTop = readPressure1();
-  pressureBottom = readPressure2();
+  pressureTop = readPressureTop();
+  pressureBottom = readPressureBottom();
   temperature = getTemperature();
   manageDisplay();
   PWM(PWMSpeed);
@@ -239,10 +254,10 @@ void loop()
   
   if (pressureBottom > 20 || pressureTop > 20) {
     servoAngle = 0;
-  DEBUG_MESSAGE("SERVO CHANGED TO 0\n");
+    DEBUG_MESSAGE("SERVO CHANGED TO 0\n");
   } else {
     servoAngle = 90;
-  DEBUG_MESSAGE("SERVO CHANGED TO 90\n");
+    DEBUG_MESSAGE("SERVO CHANGED TO 90\n");
   }
   delay(250);
 
