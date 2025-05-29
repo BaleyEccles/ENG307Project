@@ -254,10 +254,8 @@ void loop()
   
   if (pressureBottom > 20 || pressureTop > 20) {
     servoAngle = 0;
-    DEBUG_MESSAGE("SERVO CHANGED TO 0\n");
   } else {
     servoAngle = 90;
-    DEBUG_MESSAGE("SERVO CHANGED TO 90\n");
   }
   delay(250);
 
