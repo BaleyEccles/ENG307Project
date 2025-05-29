@@ -7,7 +7,7 @@
 // DEBUG MESSAGE DEFINITIONS
 // Print to the serial if DEBUG_ENABLE is defined
 */
-#define DEBUG_ENABLE
+//#define DEBUG_ENABLE
 
 #ifdef DEBUG_ENABLE
 void DEBUG_MESSAGE(String msg) {
@@ -199,22 +199,22 @@ void manageDisplay() {
   switch(displayState)
     {
     case DISPLAY_1: {
-      displayMessage("Pressure top " + pressureTop, "Pressure bottom " + pressureBottom);
+      displayMessage("P Top " + (String)pressureTop, "P Bottom " + (String)pressureBottom);
       DEBUG_MESSAGE("MESSAGE DISPLAYED 1\n");
       break;
     }
     case DISPLAY_2: {
-      displayMessage("Servo angle " + servoAngle, "Duty cycle " + String(100.0f*(float)PWMSpeed/255.0f));
+      displayMessage("S Angle " + (String)servoAngle, "PWM " + (String)(100.0f*(float)PWMSpeed/255.0f));
       DEBUG_MESSAGE("MESSAGE DISPLAYED 2\n");
       break;
     }
     case DISPLAY_3: {
-      displayMessage("Temperature " + String(temperature), ":)");
+      displayMessage("Temp " + (String)temperature, ":)");
       DEBUG_MESSAGE("MESSAGE DISPLAYED 3\n");
       break;
     }
     default: {
-      displayMessage("ERROR:", "THIS CODE SHOULD BE UNREACHABLE");
+      displayMessage("ERROR:", "UNREACHABLE");
       DEBUG_MESSAGE("MESSAGE DISPLAYED ERROR\n");
       break;
     }
@@ -272,9 +272,10 @@ void loop()
   setServoAngle(servoAngle);
 
   manageDisplay();
+  //displayMessage("test1", "test2");
 
   
-  if (pressureBottom > 20 || pressureTop > 20) {
+  if (pressureBottom > 30 || pressureTop > 1) {
     servoAngle = 0;
   } else {
     servoAngle = 90;
