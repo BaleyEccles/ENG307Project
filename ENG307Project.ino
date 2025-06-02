@@ -7,6 +7,7 @@
 // DEBUG MESSAGE DEFINITIONS
 // Print to the serial if DEBUG_ENABLE is defined
 */
+
 //#define DEBUG_ENABLE
 
 #ifdef DEBUG_ENABLE
@@ -29,6 +30,8 @@ const int buttonPin1 = 2;
 const int buttonPin2 = 3;
 const int PWMPin = 5;
 const int servoPin = 6;
+
+boolean validTemperature = false;
 
 /*
 // EXTERNAL DEFINITIONS
@@ -72,10 +75,10 @@ void displayMessage(String line1, String line2)
 {
   DEBUG_MESSAGE("DISPLAY MESSAGE \"" + line1 + "\" ON LINE 1\n");
   DEBUG_MESSAGE("DISPLAY MESSAGE \"" + line2 + "\" ON LINE 2\n");
-  lcd.clear();         // clear display
-  lcd.setCursor(0, 0); // move cursor to   (0, 0)
-  lcd.print(line1);    // print message at (0, 0)
-  lcd.setCursor(0, 1); // move cursor to   (0, 1)
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(line1);
+  lcd.setCursor(0, 1);
   lcd.print(line2);
 }
 
@@ -106,8 +109,17 @@ int getTemperature()
   float pinVoltage = ((float)pinValue/1023.0f)*Vmax;
   float R2 = R1 * (Vmax / pinVoltage - 1);
   float temperature = 30.0 - (30.0 - 5.0) * (R2 - R2min) / (R2max - R2min);
-
   DEBUG_MESSAGE("READ TEMPERATURE: " + (String)temperature + "\n");
+  
+  // check that the temperature is in the range that is deemed valid
+  if (temperature < 5.0f || temperature > 30.0f) {
+    DEBUG_MESSAGE("INVALID TEMPERATURE\n");
+    validTemperature = false;
+  } else {
+    DEBUG_MESSAGE("VALID TEMPERATURE\n");
+    validTemperature = true;
+  }
+  
   return temperature;
 }
 
@@ -209,7 +221,12 @@ void manageDisplay() {
       break;
     }
     case DISPLAY_3: {
-      displayMessage("Temp " + (String)temperature, ":)");
+      if (validTemperature) {
+        displayMessage("Temp " + (String)temperature + "C", ":)");
+      } else {
+        displayMessage("Temp " + (String)temperature, "INVALID TEMP :(");
+        
+      }
       DEBUG_MESSAGE("MESSAGE DISPLAYED 3\n");
       break;
     }
@@ -272,8 +289,6 @@ void loop()
   setServoAngle(servoAngle);
 
   manageDisplay();
-  //displayMessage("test1", "test2");
-
   
   if (pressureBottom > 30 || pressureTop > 1) {
     servoAngle = 0;
@@ -286,3 +301,4 @@ void loop()
   DEBUG_MESSAGE("RUNNING\n");
 
 }
+
