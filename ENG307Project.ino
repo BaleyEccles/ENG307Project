@@ -290,10 +290,18 @@ void loop()
 
   manageDisplay();
   
-  if (pressureBottom > 30 || pressureTop > 1) {
+  if (pressureBottom > 20 || pressureTop > 1) {
     servoAngle = 0;
   } else {
     servoAngle = 90;
+  }
+
+  // Overflow
+  if (pressureBottom > 40 || pressureTop > 20) {
+    PWMSpeed = 0;
+    servoAngle = 0;
+  } else {
+    PWMSpeed = 255;
   }
   delay(250);
 
